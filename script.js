@@ -1,4 +1,5 @@
 javascript: {
+  const AMAZON_AFFILIATE_ID='cluboshiire-22'
   // 書籍名の取得
   const productTitle = document.getElementById("productTitle");
   const ebooksProductTitle = document.getElementById("ebooksProductTitle");
@@ -18,7 +19,7 @@ javascript: {
   const pubdata = detail.innerText.split(/\n/);
   const publish_date = pubdata[2].slice(10);  //出版日付
 
-  const url = 'https://www.amazon.co.jp/exec/obidos/ASIN/'+asin+'/cluboshiire-22/';
+  const url = `https://www.amazon.co.jp/exec/obidos/ASIN/${asin}/${AMAZON_AFFILIATE_ID}`;
   const link = '[' + title + '](' + url + ')';
 
   // 選択範囲を取得する
@@ -34,25 +35,25 @@ javascript: {
   const ebooksImgBlkFront = document.getElementById("ebooksImgBlkFront");
   const imageurl = imgBlkFront ? imgBlkFront.getAttribute("src") : ebooksImgBlkFront.getAttribute("src");
   
-  var pub = []; //著者情報の処理
-  var simplePub = [];
-  var c = document.getElementsByClassName('author');
-  for (g = 0; g < c.length; g++) {
-      var at = c[g].innerText.replace(/\r?\n/g, '').replace(/,/, '');
+  const authors = []; //著者情報の処理
+  // const simplePub = [];
+  document.querySelectorAll('.author').forEach((c) => {
+      var at = c.innerText.replace(/\r?\n/g, '').replace(/,/, '');
       var pu = at.match(/\(.+\)/);
       var ct = at.replace(/\(.+\)/, '').replace(/ /g, '');
-      pub.push('[[' + ct + ']]');
-      simplePub.push(ct);
-  }
-  var author = pub.join(' ');
-  var simpleAuthors = simplePub.join(' ');
+      // pub.push('[[' + ct + ']]');
+      authors.push(ct);
+  });
+  // const author = pub.join(' ');
+  // const simpleAuthors = simplePub.join(' ');
 
   // 自分が必要なパラメータに変換
   // var h1title = '# 『' + title + '』\n\n';
   var mdimage = '\n![|100](' + imageurl + ')\n';
 
   // 表示させたい項目
-  const lines = '---\ntitle: ' + title + '\nauthor: ' + simpleAuthors+ '\n' + 'asin: ' + asin + '\n' + 'publish_date: ' +  publish_date + '\n---\n' + link + '\n' + pub.join(' ') + mdimage + '\n' + selection + '\n';
+  // const lines = '---\ntitle: ' + title + '\nauthor: ' + authors.join(' ') + '\n' + 'asin: ' + asin + '\n' + 'publish_date: ' +  publish_date + '\n---\n' + link + '\n' + authors.join(' ') + mdimage + '\n' + selection + '\n';
+  const lines = `---\ntitle: ${title} \nauthor: ${authors.join(' ')}\nasin: ${asin}\npublish_date: ${publish_date}\n---\n${link}\n${authors.join(' ')}${mdimage}\n${selection}\n`;
   
   document.getElementById('bookDescription_feature_div').innerHTML = '<textarea style="height:500px">' + lines + '</textarea>';
 }
