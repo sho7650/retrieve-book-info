@@ -1,5 +1,6 @@
 javascript: {
   const AMAZON_AFFILIATE_ID='cluboshiire-22'
+
   // 書籍名の取得
   const productTitle = document.getElementById("productTitle");
   const ebooksProductTitle = document.getElementById("ebooksProductTitle");
@@ -12,48 +13,41 @@ javascript: {
   //登録情報欄を取得
   let detail = document.getElementById('detailBullets_feature_div');
   if (!detail) {
-      const subdoc = document.getElementById("product-description-iframe").contentWindow.document;
-      detail = subdoc.getElementById("detailBullets_feature_div");
+    const subdoc = document.getElementById("product-description-iframe").contentWindow.document;
+    detail = subdoc.getElementById("detailBullets_feature_div");
   }
 
+  // 出版関係の情報を取得 (ここでは出版日付だけ)
   const pubdata = detail.innerText.split(/\n/);
   const publish_date = pubdata[2].slice(10);  //出版日付
 
+  // 書籍のタイトルとリンク貼り
   const url = `https://www.amazon.co.jp/exec/obidos/ASIN/${asin}/${AMAZON_AFFILIATE_ID}`;
-  const link = '[' + title + '](' + url + ')';
+  const link = `[${title}](${url})`;
 
   // 選択範囲を取得する
-  let selection = window.getSelection().toString();  // 選択範囲を文字列として取得
-  if (selection) { // 選択範囲があるとき
-    selection = select.replace(/(\W+)( )(\W+)/g,'$1$3'); // 字間に時々紛れている半角スペースを除去
-    selection = "\n> " + select.replace(/\n/g,'\n> '); // 行ごとに引用の「>」を付与
-  } else { // 選択範囲が空のとき
-    selection = "";
-  };
+  const isSelection = window.getSelection().toString();
+  const selection = isSelection ? `> ${isSelection.replace(/(\W+)( )(\W+)/g,'$1$3').replace(/\n/g,'\n> ')}` : "";
 
+  // 書影の取得
   const imgBlkFront = document.getElementById("imgBlkFront");
   const ebooksImgBlkFront = document.getElementById("ebooksImgBlkFront");
   const imageurl = imgBlkFront ? imgBlkFront.getAttribute("src") : ebooksImgBlkFront.getAttribute("src");
+  const mdimage = `\n![|100](${imageurl})\n`;  
   
-  const authors = []; //著者情報の処理
-  // const simplePub = [];
+  // 著者情報の取得
+  const authors = [];
+  const viewAuthors = [];
   document.querySelectorAll('.author').forEach((c) => {
       var at = c.innerText.replace(/\r?\n/g, '').replace(/,/, '');
       var pu = at.match(/\(.+\)/);
       var ct = at.replace(/\(.+\)/, '').replace(/ /g, '');
-      // pub.push('[[' + ct + ']]');
+      viewAuthors.push(`[[${ct}]]${pu}`);
       authors.push(ct);
   });
-  // const author = pub.join(' ');
-  // const simpleAuthors = simplePub.join(' ');
 
-  // 自分が必要なパラメータに変換
-  // var h1title = '# 『' + title + '』\n\n';
-  var mdimage = '\n![|100](' + imageurl + ')\n';
-
-  // 表示させたい項目
-  // const lines = '---\ntitle: ' + title + '\nauthor: ' + authors.join(' ') + '\n' + 'asin: ' + asin + '\n' + 'publish_date: ' +  publish_date + '\n---\n' + link + '\n' + authors.join(' ') + mdimage + '\n' + selection + '\n';
-  const lines = `---\ntitle: ${title} \nauthor: ${authors.join(' ')}\nasin: ${asin}\npublish_date: ${publish_date}\n---\n${link}\n${authors.join(' ')}${mdimage}\n${selection}\n`;
+  // 表示する内容
+  const lines = `---\ntitle: ${title} \nauthor: [${authors.join(',')}]\nasin: ${asin}\npublish_date: ${publish_date}\n---\n${link}\n${viewAuthors.join('\n')}${mdimage}\n${selection}\n`;
   
-  document.getElementById('bookDescription_feature_div').innerHTML = '<textarea style="height:500px">' + lines + '</textarea>';
+  document.getElementById('bookDescription_feature_div').innerHTML = `<textarea style="height:500px">${lines}</textarea>`;
 }
