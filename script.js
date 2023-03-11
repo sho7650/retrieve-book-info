@@ -47,7 +47,7 @@ javascript: {
   });
 
   // 表示する内容
-  const lines = `---\ntitle: ${title} \nauthor: [${authors.join(',')}]\nasin: ${asin}\npublish_date: ${publish_date}\n---\n${link}\n${viewAuthors.join('\n')}${mdimage}\n${selection}\n`;
+  const lines = `---\ntitle: ${title} \nauthor: [${authors.join(',')}]\nasin: ${asin}\npublish_date: ${publish_date}\n---\n# ${link}\n${viewAuthors.join('\n')}${mdimage}\n${selection}\n\n----\n`;
   
   document.getElementById('bookDescription_feature_div').innerHTML = `<textarea style="height:500px">${lines}</textarea>`;
 }
